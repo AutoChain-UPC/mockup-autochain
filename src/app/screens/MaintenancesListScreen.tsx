@@ -8,13 +8,15 @@ interface MaintenancesListScreenProps {
   onBack: () => void;
   onSelectMaintenance: (maintenance: Maintenance) => void;
   onRegisterMaintenance: () => void;
+  isOwner?: boolean;
 }
 
 export default function MaintenancesListScreen({
   maintenances,
   onBack,
   onSelectMaintenance,
-  onRegisterMaintenance
+  onRegisterMaintenance,
+  isOwner = true
 }: MaintenancesListScreenProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white w-full max-w-[414px] mx-auto relative">
@@ -25,11 +27,13 @@ export default function MaintenancesListScreen({
           Historial de Mantenimientos
         </h1>
 
-        <div className="mb-6">
-          <Button onClick={onRegisterMaintenance}>
-            Registrar Mantenimiento
-          </Button>
-        </div>
+        {isOwner && (
+          <div className="mb-6">
+            <Button onClick={onRegisterMaintenance}>
+              Registrar Mantenimiento
+            </Button>
+          </div>
+        )}
 
         <div className="space-y-4">
           {maintenances.map((maintenance) => (

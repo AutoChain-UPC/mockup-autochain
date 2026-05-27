@@ -2,7 +2,8 @@ import { useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
 import Button from '../components/Button';
 import MaintenanceItemModal from '../components/MaintenanceItemModal';
-import { Plus, Wrench } from 'lucide-react';
+import { useToast } from '../components/Toast';
+import { Plus, Wrench, AlertCircle } from 'lucide-react';
 
 interface MaintenanceDetailItem {
   id: string;
@@ -29,6 +30,8 @@ export default function RegisterMaintenanceDetailsScreen({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MaintenanceDetailItem | null>(null);
   const [viewMode, setViewMode] = useState(false);
+  const [nextError, setNextError] = useState('');
+  const { showToast } = useToast();
 
   // Mock data - en producción vendría de la API
   const actionTypes = [
@@ -94,7 +97,7 @@ export default function RegisterMaintenanceDetailsScreen({
         componentName: component?.name
       };
       setItems([...items, newItem]);
-      alert('Acción añadida');
+      showToast('Acción añadida correctamente');
     }
     setIsModalOpen(false);
     setSelectedItem(null);
@@ -110,10 +113,10 @@ export default function RegisterMaintenanceDetailsScreen({
 
   const handleNext = () => {
     if (items.length === 0) {
-      alert('Debe agregar al menos una acción realizada');
+      setNextError('Debe agregar al menos una acción realizada');
       return;
     }
-
+    setNextError('');
     onNext(items);
   };
 
@@ -212,7 +215,13 @@ export default function RegisterMaintenanceDetailsScreen({
           </div>
         )}
 
-        <div className="mt-8">
+        <div className="mt-8 space-y-3">
+          {nextError && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <AlertCircle size={16} className="text-red-500 flex-shrink-0" />
+              <p className="text-red-600 text-[13px]">{nextError}</p>
+            </div>
+          )}
           <Button onClick={handleNext}>Adjuntar Evidencia</Button>
         </div>
 

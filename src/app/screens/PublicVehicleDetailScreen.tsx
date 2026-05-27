@@ -9,6 +9,7 @@ interface PublicVehicleDetailScreenProps {
   onRequestAccess: () => void;
   hasRequestedAccess: boolean;
   hasAccess: boolean;
+  onViewMaintenances?: () => void;
 }
 
 export default function PublicVehicleDetailScreen({
@@ -16,7 +17,8 @@ export default function PublicVehicleDetailScreen({
   onBack,
   onRequestAccess,
   hasRequestedAccess,
-  hasAccess
+  hasAccess,
+  onViewMaintenances
 }: PublicVehicleDetailScreenProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white w-full max-w-[414px] mx-auto relative pb-24">
@@ -102,14 +104,21 @@ export default function PublicVehicleDetailScreen({
 
         {/* Botón de acción */}
         {hasAccess ? (
-          <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-              <Eye size={20} className="text-white" />
+          <div className="space-y-3">
+            <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                <Eye size={20} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-green-700 text-[14px] font-bold">Acceso Concedido</p>
+                <p className="text-green-600 text-[12px]">Puedes ver la información completa</p>
+              </div>
             </div>
-            <div className="flex-1">
-              <p className="text-green-700 text-[14px] font-bold">Acceso Concedido</p>
-              <p className="text-green-600 text-[12px]">Puedes ver la información completa</p>
-            </div>
+            {onViewMaintenances && (
+              <Button onClick={onViewMaintenances}>
+                Ver Historial de Mantenimientos
+              </Button>
+            )}
           </div>
         ) : hasRequestedAccess ? (
           <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 flex items-center gap-3">

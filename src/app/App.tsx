@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { ToastProvider, useToast } from './components/Toast';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import PublicVehiclesScreen from './screens/PublicVehiclesScreen';
@@ -26,8 +27,22 @@ import imgPorsche from '../imports/ListadoDeVehiculos-1/49848e7144325e4e6748085f
 import imgFerrari from '../imports/ListadoDeVehiculos-1/44f1208e56e94e2a359ce248f3b97dc6746720f5.png';
 
 export default function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
+  );
+}
+
+function AppContent() {
+  const { showToast } = useToast();
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
   const [menuOpen, setMenuOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollContainerRef.current?.scrollTo({ top: 0 });
+  }, [currentScreen]);
 
   // User state
   const [user, setUser] = useState<User>({
@@ -77,6 +92,21 @@ export default function App() {
       imagen: imgPorsche,
       visible: true,
       ownerId: '2'
+    },
+    {
+      id: '4',
+      marca: 'BMW',
+      modelo: 'M3 Competition',
+      año: '2022',
+      placa: 'XKR-874',
+      vin: 'BMW874XKR20220M3',
+      color: 'Azul Portimao',
+      version: 'Competition',
+      motor: 'BMW874XKR20220M3',
+      cilindrada: '2,993 cc',
+      imagen: imgFerrari,
+      visible: true,
+      ownerId: '3'
     }
   ]);
 
@@ -187,10 +217,139 @@ export default function App() {
       blockchainHash: '0x8a4d9c2f7b3e5a1c6d8f9e2b4a7c3d1e5f8a2b4c',
       validatedAt: '2023-10-25',
       validatedBy: '1'
+    },
+    {
+      id: '3',
+      vehicleId: '3',
+      userId: '2',
+      date: '2025-11-10',
+      description: 'Actualización de software y revisión del sistema de baterías a los 42,000 km',
+      mileage: 42000,
+      status: 'validado',
+      typeId: '1',
+      typeName: 'Mantenimiento Menor',
+      details: [
+        {
+          id: '5',
+          actionTypeId: '2',
+          actionTypeName: 'Actualización',
+          previousState: 'Firmware v11.2.1',
+          newState: 'Firmware v12.0.4',
+          cost: 0.00,
+          notes: 'Actualización OTA completada en taller. Se incluye mejora en eficiencia de carga y nuevas funciones de conducción autónoma.',
+          componentId: '5',
+          componentName: 'Sistema de software'
+        },
+        {
+          id: '6',
+          actionTypeId: '3',
+          actionTypeName: 'Revisión',
+          previousState: 'Capacidad al 94%',
+          newState: 'Capacidad al 94% — sin degradación anormal',
+          cost: 180.00,
+          notes: 'Se realizó diagnóstico completo del pack de baterías. Estado dentro de parámetros normales para el kilometraje.',
+          componentId: '6',
+          componentName: 'Pack de baterías'
+        }
+      ],
+      taller: 'Tesla Service Center',
+      blockchainHash: '0x3f1e7a2c9b4d6e8f0a2c4e6b8d0f2a4c6e8b0d2f',
+      validatedAt: '2025-11-11T09:15:00Z',
+      validatedBy: '2',
+      imagen: 'tesla_maint1.jpg',
+      factura: 'Factura_TSC_112.pdf'
+    },
+    {
+      id: '4',
+      vehicleId: '3',
+      userId: '2',
+      date: '2026-02-20',
+      description: 'Revisión de frenos y cambio de líquido de frenos a los 48,500 km',
+      mileage: 48500,
+      status: 'rechazado',
+      typeId: '1',
+      typeName: 'Mantenimiento Menor',
+      details: [
+        {
+          id: '7',
+          actionTypeId: '3',
+          actionTypeName: 'Revisión',
+          previousState: 'Pastillas al 40%, disco con marcas leves',
+          newState: 'Pastillas al 40% — se recomienda cambio próximo',
+          cost: 90.00,
+          notes: 'Se revisaron frenos delanteros y traseros. Las pastillas aún tienen vida útil pero se acercan al límite.',
+          componentId: '7',
+          componentName: 'Sistema de frenos'
+        },
+        {
+          id: '8',
+          actionTypeId: '1',
+          actionTypeName: 'Cambio',
+          previousState: 'Líquido DOT 3, 2 años de uso',
+          newState: 'Líquido DOT 4 nuevo',
+          cost: 55.00,
+          notes: 'Cambio de líquido de frenos realizado correctamente.',
+          componentId: '8',
+          componentName: 'Líquido de frenos'
+        }
+      ],
+      taller: 'SpeedTech Motors',
+      rejectedAt: '2026-02-22T14:30:00Z',
+      rejectedBy: '2',
+      rejectionReason: 'La factura presentada no corresponde al servicio registrado. Se detectaron inconsistencias en los montos cobrados.',
+      imagen: 'tesla_maint2.jpg',
+      factura: 'Factura_STM_045.pdf'
+    },
+    {
+      id: '5',
+      vehicleId: '3',
+      userId: '2',
+      date: '2026-04-30',
+      description: 'Rotación de neumáticos y alineación a los 52,200 km',
+      mileage: 52200,
+      status: 'pendiente',
+      typeId: '1',
+      typeName: 'Mantenimiento Menor',
+      details: [
+        {
+          id: '9',
+          actionTypeId: '4',
+          actionTypeName: 'Rotación',
+          previousState: 'Neumáticos delanteros con mayor desgaste',
+          newState: 'Neumáticos rotados correctamente',
+          cost: 60.00,
+          notes: 'Rotación cruzada realizada. Desgaste uniforme esperado tras la rotación.',
+          componentId: '9',
+          componentName: 'Neumáticos'
+        },
+        {
+          id: '10',
+          actionTypeId: '5',
+          actionTypeName: 'Calibración',
+          previousState: 'Alineación desviada 0.3° al frente derecho',
+          newState: 'Alineación dentro de especificaciones de fábrica',
+          cost: 80.00,
+          notes: 'Alineación de cuatro ruedas completada. Se recomienda revisión cada 10,000 km.',
+          componentId: '10',
+          componentName: 'Dirección y alineación'
+        }
+      ],
+      taller: 'AutoCare',
+      imagen: 'tesla_maint3.jpg',
+      factura: 'Factura_AC_287.pdf'
     }
   ]);
 
   const [selectedMaintenance, setSelectedMaintenance] = useState<Maintenance | null>(null);
+
+  // Track where the maintenances list was opened from (for back navigation)
+  const [maintenancesOrigin, setMaintenancesOrigin] = useState<Screen>('vehicle-detail');
+
+  // Track where notifications was opened from (for back navigation)
+  const [notificationsOrigin, setNotificationsOrigin] = useState<Screen>('public-vehicles');
+
+  // Track where register-maintenance was started from (for back navigation)
+  const [registerMaintenanceOrigin, setRegisterMaintenanceOrigin] = useState<Screen>('vehicle-detail');
 
   // New maintenance registration state
   const [newMaintenanceData, setNewMaintenanceData] = useState<any>({});
@@ -198,6 +357,7 @@ export default function App() {
 
   // Validator mode state
   const [isValidator, setIsValidator] = useState(false);
+  const [isValidatorMode, setIsValidatorMode] = useState(false);
   const [selectedApproval, setSelectedApproval] = useState<any>(null);
 
   // Navigation handlers
@@ -229,7 +389,8 @@ export default function App() {
     setCurrentScreen('vehicle-detail');
   };
 
-  const handleViewMaintenances = () => {
+  const handleViewMaintenances = (origin: Screen = 'vehicle-detail') => {
+    setMaintenancesOrigin(origin);
     setCurrentScreen('maintenances');
   };
 
@@ -255,7 +416,7 @@ export default function App() {
       setSelectedVehicle({ ...selectedVehicle, visible: !selectedVehicle.visible });
 
       const newStatus = !selectedVehicle.visible ? 'visible públicamente' : 'privado';
-      alert(`Vehículo marcado como ${newStatus}`);
+      showToast(`Vehículo marcado como ${newStatus}`);
     }
   };
 
@@ -269,7 +430,7 @@ export default function App() {
     if (screen === 'vehicles') setCurrentScreen('vehicles');
     if (screen === 'granted-vehicles') setCurrentScreen('granted-vehicles');
     if (screen === 'profile') setCurrentScreen('profile');
-    if (screen === 'notifications') setCurrentScreen('notifications');
+    if (screen === 'notifications') handleOpenNotifications('public-vehicles');
     if (screen === 'validator-approvals') setCurrentScreen('validator-approvals');
     if (screen === 'validator-history') setCurrentScreen('validator-history');
     setMenuOpen(false);
@@ -303,8 +464,8 @@ export default function App() {
       relatedId: vehicleId
     };
 
-    setNotifications([notification, ...notifications]);
-    alert('Solicitud de acceso enviada correctamente');
+    setNotifications([...notifications, notification]);
+    showToast('Solicitud de acceso enviada correctamente');
     setCurrentScreen('public-vehicles');
   };
 
@@ -333,10 +494,16 @@ export default function App() {
     }
   };
 
-  const handleStartMaintenanceRegistration = () => {
+  const handleStartMaintenanceRegistration = (origin: Screen = 'vehicle-detail') => {
+    setRegisterMaintenanceOrigin(origin);
     setNewMaintenanceData({});
     setNewMaintenanceItems([]);
     setCurrentScreen('register-maintenance');
+  };
+
+  const handleOpenNotifications = (origin: Screen) => {
+    setNotificationsOrigin(origin);
+    setCurrentScreen('notifications');
   };
 
   const handleMaintenanceDataNext = (data: any) => {
@@ -383,7 +550,7 @@ export default function App() {
     // En una app real, aquí se guardaría en la base de datos
     console.log('Nuevo mantenimiento:', newMaintenance);
 
-    alert('¡Mantenimiento registrado exitosamente!');
+    showToast('¡Mantenimiento registrado exitosamente!');
     setCurrentScreen('maintenances');
   };
 
@@ -391,15 +558,14 @@ export default function App() {
     if (!isValidator) {
       // Primera vez - mostrar pantalla de bienvenida
       setCurrentScreen('become-validator');
+    } else if (isValidatorMode) {
+      // Ya está en modo validador → cambiar a modo propietario
+      setIsValidatorMode(false);
+      setCurrentScreen('public-vehicles');
     } else {
-      // Ya es validador - alternar entre modo validador y propietario
-      // Si está en pantalla de validador, ir a vehículos públicos (modo propietario)
-      // Si está en pantalla de propietario, ir a aprobaciones (modo validador)
-      if (currentScreen === 'validator-approvals' || currentScreen === 'approval-detail' || currentScreen === 'validator-history') {
-        setCurrentScreen('public-vehicles');
-      } else {
-        setCurrentScreen('validator-approvals');
-      }
+      // Está en modo propietario → cambiar a modo validador
+      setIsValidatorMode(true);
+      setCurrentScreen('validator-approvals');
     }
   };
 
@@ -410,7 +576,8 @@ export default function App() {
   const handleRegisterValidator = (data: any) => {
     console.log('Registro de taller:', data);
     setIsValidator(true);
-    alert('¡Taller registrado exitosamente! Ahora eres un validador de AutoChain.');
+    setIsValidatorMode(true);
+    showToast('¡Taller registrado exitosamente! Ahora eres un validador de AutoChain.');
     setCurrentScreen('validator-approvals');
   };
 
@@ -453,7 +620,7 @@ export default function App() {
       };
 
       setNotifications([notification, ...notifications]);
-      alert('¡Mantenimiento aprobado y registrado en blockchain!');
+      showToast('¡Mantenimiento aprobado y registrado en blockchain!');
     }
   };
 
@@ -494,7 +661,7 @@ export default function App() {
       };
 
       setNotifications([notification, ...notifications]);
-      alert('Mantenimiento rechazado correctamente');
+      showToast('Mantenimiento rechazado correctamente', 'error');
     }
   };
 
@@ -507,10 +674,10 @@ export default function App() {
           onNavigate={handleNavigate}
           onLogout={handleLogout}
           onValidatorMode={handleValidatorMode}
-          isValidator={isValidator}
+          isValidator={isValidatorMode}
         />
 
-        <div className="h-full overflow-y-auto">
+        <div className="h-full overflow-y-auto" ref={scrollContainerRef}>
 
           {currentScreen === 'login' && (
             <LoginScreen
@@ -534,7 +701,7 @@ export default function App() {
                 setCurrentScreen('public-vehicle-detail');
               }}
               onOpenMenu={() => setMenuOpen(true)}
-              onOpenNotifications={() => setCurrentScreen('notifications')}
+              onOpenNotifications={() => handleOpenNotifications('public-vehicles')}
               unreadNotifications={notifications.filter(n => !n.read).length}
               userId={user.id}
               vehicleAccesses={vehicleAccesses}
@@ -556,6 +723,7 @@ export default function App() {
                   va => va.vehicleId === selectedVehicle.id && va.requestedById === user.id && va.status === 'concedido'
                 )
               }
+              onViewMaintenances={() => handleViewMaintenances('public-vehicle-detail')}
             />
           )}
 
@@ -571,7 +739,7 @@ export default function App() {
                 setCurrentScreen('granted-vehicle-detail');
               }}
               onBack={() => setCurrentScreen('public-vehicles')}
-              onOpenNotifications={() => setCurrentScreen('notifications')}
+              onOpenNotifications={() => handleOpenNotifications('granted-vehicles')}
               unreadNotifications={notifications.filter(n => !n.read).length}
             />
           )}
@@ -580,7 +748,7 @@ export default function App() {
             <VehicleDetailScreen
               vehicle={selectedVehicle}
               onBack={() => setCurrentScreen('granted-vehicles')}
-              onViewMaintenances={handleViewMaintenances}
+              onViewMaintenances={() => handleViewMaintenances('granted-vehicle-detail')}
               onRegisterMaintenance={handleStartMaintenanceRegistration}
               onDeleteVehicle={handleDeleteVehicle}
               isOwner={false}
@@ -590,7 +758,7 @@ export default function App() {
           {currentScreen === 'notifications' && (
             <NotificationsScreen
               notifications={notifications.filter(n => n.userId === user.id)}
-              onBack={() => setCurrentScreen('public-vehicles')}
+              onBack={() => setCurrentScreen(notificationsOrigin)}
               onMarkAsRead={handleMarkNotificationAsRead}
               onNotificationClick={handleNotificationClick}
             />
@@ -602,7 +770,7 @@ export default function App() {
               onSelectVehicle={handleSelectVehicle}
               onRegisterVehicle={() => setCurrentScreen('register-vehicle')}
               onOpenMenu={() => setMenuOpen(true)}
-              onOpenNotifications={() => setCurrentScreen('notifications')}
+              onOpenNotifications={() => handleOpenNotifications('vehicles')}
               unreadNotifications={notifications.filter(n => !n.read).length}
             />
           )}
@@ -618,8 +786,8 @@ export default function App() {
             <VehicleDetailScreen
               vehicle={selectedVehicle}
               onBack={() => setCurrentScreen('vehicles')}
-              onViewMaintenances={handleViewMaintenances}
-              onRegisterMaintenance={handleStartMaintenanceRegistration}
+              onViewMaintenances={() => handleViewMaintenances('vehicle-detail')}
+              onRegisterMaintenance={() => handleStartMaintenanceRegistration('vehicle-detail')}
               onDeleteVehicle={handleDeleteVehicle}
               onToggleVisibility={handleToggleVisibility}
               isOwner={true}
@@ -629,15 +797,16 @@ export default function App() {
           {currentScreen === 'maintenances' && (
             <MaintenancesListScreen
               maintenances={maintenances.filter(m => m.vehicleId === selectedVehicle?.id)}
-              onBack={() => setCurrentScreen('vehicle-detail')}
+              onBack={() => setCurrentScreen(maintenancesOrigin)}
               onSelectMaintenance={handleSelectMaintenance}
-              onRegisterMaintenance={handleStartMaintenanceRegistration}
+              onRegisterMaintenance={() => handleStartMaintenanceRegistration('maintenances')}
+              isOwner={selectedVehicle?.ownerId === user.id}
             />
           )}
 
           {currentScreen === 'register-maintenance' && (
             <RegisterMaintenanceScreen
-              onBack={() => setCurrentScreen('vehicle-detail')}
+              onBack={() => setCurrentScreen(registerMaintenanceOrigin)}
               onNext={handleMaintenanceDataNext}
               vehicleImage={selectedVehicle?.imagen}
             />
@@ -668,6 +837,7 @@ export default function App() {
           {currentScreen === 'blockchain-cert' && (
             <BlockchainCertScreen
               onBack={() => setCurrentScreen('maintenance-detail')}
+              maintenance={selectedMaintenance}
             />
           )}
 
@@ -676,7 +846,7 @@ export default function App() {
               user={user}
               onBack={() => setCurrentScreen('public-vehicles')}
               onViewVehicles={() => setCurrentScreen('vehicles')}
-              onOpenNotifications={() => setCurrentScreen('notifications')}
+              onOpenNotifications={() => handleOpenNotifications('profile')}
               unreadNotifications={notifications.filter(n => !n.read).length}
             />
           )}
@@ -701,7 +871,7 @@ export default function App() {
               onSelectApproval={handleSelectApproval}
               maintenances={maintenances}
               vehicles={vehicles}
-              onOpenNotifications={() => setCurrentScreen('notifications')}
+              onOpenNotifications={() => handleOpenNotifications('validator-approvals')}
               unreadNotifications={notifications.filter(n => !n.read).length}
             />
           )}
@@ -712,7 +882,7 @@ export default function App() {
               onSelectApproval={handleSelectApproval}
               maintenances={maintenances}
               vehicles={vehicles}
-              onOpenNotifications={() => setCurrentScreen('notifications')}
+              onOpenNotifications={() => handleOpenNotifications('validator-history')}
               unreadNotifications={notifications.filter(n => !n.read).length}
             />
           )}

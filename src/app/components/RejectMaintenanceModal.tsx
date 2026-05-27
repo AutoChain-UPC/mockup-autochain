@@ -14,14 +14,16 @@ export default function RejectMaintenanceModal({
   onReject
 }: RejectMaintenanceModalProps) {
   const [reason, setReason] = useState('');
+  const [formError, setFormError] = useState('');
 
   if (!isOpen) return null;
 
   const handleReject = () => {
     if (!reason.trim()) {
-      alert('Por favor ingrese el motivo del rechazo');
+      setFormError('Por favor ingrese el motivo del rechazo');
       return;
     }
+    setFormError('');
     onReject(reason);
     setReason('');
   };
@@ -66,6 +68,12 @@ export default function RejectMaintenanceModal({
         </div>
 
         <div className="space-y-3">
+          {formError && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <AlertCircle size={16} className="text-red-500 flex-shrink-0" />
+              <p className="text-red-600 text-[13px]">{formError}</p>
+            </div>
+          )}
           <Button variant="danger" onClick={handleReject}>
             Confirmar Rechazo
           </Button>

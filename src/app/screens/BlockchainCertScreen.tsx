@@ -1,16 +1,72 @@
 import MobileHeader from '../components/MobileHeader';
-import { ShieldCheck, Copy, Clock, Database, Network } from 'lucide-react';
+import { ShieldCheck, Copy, Clock, Database, Network, Lock } from 'lucide-react';
+import { Maintenance } from '../types';
+import { useToast } from '../components/Toast';
 
 interface BlockchainCertScreenProps {
   onBack: () => void;
+  maintenance: Maintenance | null;
 }
 
-export default function BlockchainCertScreen({ onBack }: BlockchainCertScreenProps) {
+export default function BlockchainCertScreen({ onBack, maintenance }: BlockchainCertScreenProps) {
+  const isValidated = maintenance?.status === 'validado' && !!maintenance?.blockchainHash;
+  const hash = maintenance?.blockchainHash || '';
+  const { showToast } = useToast();
+
   const handleCopyHash = () => {
-    navigator.clipboard.writeText('0x8a4d9c2f7b3e5a1c6d8f9e2b4a7c3d1e5f8a2b4c');
-    alert('Hash copiado al portapapeles');
+    navigator.clipboard.writeText(hash);
+    showToast('Hash copiado al portapapeles', 'info');
   };
 
+  if (!isValidated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 w-full max-w-[414px] mx-auto relative pb-20">
+        <MobileHeader onBack={onBack} showMenu />
+
+        <div className="relative z-10 px-6 pt-8 pb-20 flex flex-col items-center justify-center min-h-[70vh]">
+          {/* Ícono bloqueado */}
+          <div className="relative inline-block mb-6">
+            <div className="absolute inset-0 bg-slate-400 rounded-full blur-2xl opacity-20" />
+            <div className="relative bg-gradient-to-br from-slate-400 to-slate-500 rounded-3xl p-6 shadow-xl">
+              <Lock size={64} className="text-white opacity-80" strokeWidth={2} />
+            </div>
+          </div>
+
+          <h1 className="text-slate-600 text-[26px] font-bold mb-3 text-center">
+            Certificado No Disponible
+          </h1>
+          <p className="text-slate-500 text-[15px] text-center leading-relaxed mb-8 px-4">
+            Este certificado blockchain estará disponible una vez que el taller valide y apruebe el mantenimiento.
+          </p>
+
+          {/* Estado actual */}
+          <div className="w-full bg-white rounded-2xl border-2 border-slate-200 p-5 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Clock size={20} className="text-amber-500" />
+              </div>
+              <div>
+                <p className="text-slate-700 text-[15px] font-bold">
+                  {maintenance?.status === 'rechazado' ? 'Mantenimiento Rechazado' : 'Pendiente de Aprobación'}
+                </p>
+                <p className="text-slate-500 text-[13px]">
+                  {maintenance?.status === 'rechazado'
+                    ? 'El taller rechazó este mantenimiento. No se generará certificado.'
+                    : 'El taller aún no ha validado este mantenimiento.'}
+                </p>
+              </div>
+            </div>
+            {maintenance?.rejectionReason && (
+              <div className="mt-3 pt-3 border-t border-slate-100">
+                <p className="text-slate-500 text-[13px]">Motivo de rechazo:</p>
+                <p className="text-slate-700 text-[14px] mt-1">{maintenance.rejectionReason}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-slate-50 w-full max-w-[414px] mx-auto relative pb-20">
@@ -56,7 +112,7 @@ export default function BlockchainCertScreen({ onBack }: BlockchainCertScreenPro
               </p>
               <div className="flex items-center justify-between gap-2">
                 <p className="text-slate-800 text-[12px] font-mono break-all flex-1">
-                  0x8a4d9c2f7b3e...5f8a2b4c
+                  {hash.length > 20 ? `${hash.slice(0, 18)}...${hash.slice(-8)}` : hash}
                 </p>
                 <button
                   onClick={handleCopyHash}
@@ -102,7 +158,17 @@ export default function BlockchainCertScreen({ onBack }: BlockchainCertScreenPro
                 </div>
                 <div>
                   <p className="text-slate-500 text-[13px]">Fecha de Registro</p>
-                  <p className="text-slate-800 text-[15px] font-bold">24 Oct 2024, 14:32 UTC</p>
+                  <p className="text-slate-800 text-[15px] font-bold">
+                    {maintenance?.validatedAt
+                      ? new Date(maintenance.validatedAt).toLocaleString('es-ES', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        }) + ' UTC'
+                      : '—'}
+                  </p>
                 </div>
               </div>
             </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Button from './Button';
-import { X, ChevronDown } from 'lucide-react';
+import { X, ChevronDown, AlertCircle } from 'lucide-react';
 
 interface MaintenanceItemModalProps {
   isOpen: boolean;
@@ -38,6 +38,7 @@ export default function MaintenanceItemModal({
   const [cost, setCost] = useState('');
   const [notes, setNotes] = useState('');
   const [componentId, setComponentId] = useState('');
+  const [formError, setFormError] = useState('');
 
   // Mock data - en producción vendría de la API
   const actionTypes = [
@@ -81,9 +82,10 @@ export default function MaintenanceItemModal({
 
   const handleSave = () => {
     if (!actionTypeId || !newState || !cost || !notes) {
-      alert('Por favor complete todos los campos obligatorios');
+      setFormError('Por favor complete todos los campos obligatorios');
       return;
     }
+    setFormError('');
     onSave({
       actionTypeId,
       previousState: '',
@@ -203,6 +205,12 @@ export default function MaintenanceItemModal({
         </div>
 
         <div className="mt-6 space-y-3">
+          {formError && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <AlertCircle size={16} className="text-red-500 flex-shrink-0" />
+              <p className="text-red-600 text-[13px]">{formError}</p>
+            </div>
+          )}
           {!viewMode && (
             <Button onClick={handleSave}>Guardar</Button>
           )}
