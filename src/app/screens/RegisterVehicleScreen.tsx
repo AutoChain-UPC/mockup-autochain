@@ -97,7 +97,8 @@ export default function RegisterVehicleScreen({ onBack, onRegister }: RegisterVe
 
           <div className="pt-4">
             <p className="text-slate-700 text-[16px] mb-3 tracking-[0.75px]">
-              Representación Visual
+              Representación Visual{' '}
+              <span className="text-slate-400 text-[13px] font-normal">(opcional)</span>
             </p>
             <div className="bg-slate-100 rounded-[25px] h-[146px] flex flex-col items-center justify-center gap-2 border border-black shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
               <Camera size={83} className="text-[#1D1B20]" />
