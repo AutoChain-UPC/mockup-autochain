@@ -16,6 +16,7 @@ import NotificationsScreen from './screens/NotificationsScreen';
 import RegisterMaintenanceScreen from './screens/RegisterMaintenanceScreen';
 import RegisterMaintenanceDetailsScreen from './screens/RegisterMaintenanceDetailsScreen';
 import RegisterMaintenanceEvidenceScreen from './screens/RegisterMaintenanceEvidenceScreen';
+import RegisterMaintenanceAiScreen from './screens/RegisterMaintenanceAiScreen';
 import BecomeValidatorScreen from './screens/BecomeValidatorScreen';
 import RegisterValidatorScreen from './screens/RegisterValidatorScreen';
 import ValidatorApprovalsScreen from './screens/ValidatorApprovalsScreen';
@@ -501,6 +502,13 @@ function AppContent() {
     setCurrentScreen('register-maintenance');
   };
 
+  const handleStartMaintenanceRegistrationAi = (origin: Screen = 'vehicle-detail') => {
+    setRegisterMaintenanceOrigin(origin);
+    setNewMaintenanceData({});
+    setNewMaintenanceItems([]);
+    setCurrentScreen('register-maintenance-ai');
+  };
+
   const handleOpenNotifications = (origin: Screen) => {
     setNotificationsOrigin(origin);
     setCurrentScreen('notifications');
@@ -516,19 +524,18 @@ function AppContent() {
     setCurrentScreen('register-maintenance-evidence');
   };
 
-  const handleMaintenanceFinish = (evidence: any) => {
-    // Aquí se crearía el nuevo mantenimiento con todos los datos
+  const handleMaintenanceFinish = (draft: any) => {
     const newMaintenance: Maintenance = {
       id: String(Date.now()),
       vehicleId: selectedVehicle?.id || '1',
       userId: user.id,
-      date: newMaintenanceData.fecha,
-      description: newMaintenanceData.descripcion,
-      mileage: newMaintenanceData.kilometraje,
+      date: draft.date,
+      description: draft.description,
+      mileage: draft.mileage,
       status: 'pendiente',
-      typeId: newMaintenanceData.tipoServicio,
-      typeName: ['Mantenimiento Menor', 'Mantenimiento Mayor', 'Mantenimiento Correctivo'][parseInt(newMaintenanceData.tipoServicio) - 1],
-      details: newMaintenanceItems.map((item, index) => ({
+      typeId: draft.typeId,
+      typeName: draft.typeName,
+      details: draft.details.map((item: any, index: number) => ({
         id: String(index + 1),
         actionTypeId: item.actionTypeId,
         actionTypeName: item.actionTypeName,
@@ -539,9 +546,9 @@ function AppContent() {
         componentId: item.componentId,
         componentName: item.componentName
       })),
-      taller: newMaintenanceData.taller,
-      imagen: evidence.photos.length > 0 ? evidence.photos[0] : undefined,
-      factura: evidence.documents.length > 0 ? evidence.documents[0] : undefined
+      taller: draft.taller,
+      imagen: draft.photos?.length > 0 ? draft.photos[0] : undefined,
+      factura: draft.documents?.length > 0 ? draft.documents[0] : undefined
     };
 
     // Agregar al inicio del array (como cola)
@@ -800,6 +807,7 @@ function AppContent() {
               onBack={() => setCurrentScreen(maintenancesOrigin)}
               onSelectMaintenance={handleSelectMaintenance}
               onRegisterMaintenance={() => handleStartMaintenanceRegistration('maintenances')}
+              onRegisterMaintenanceAi={() => handleStartMaintenanceRegistrationAi('maintenances')}
               isOwner={selectedVehicle?.ownerId === user.id}
             />
           )}
@@ -808,6 +816,14 @@ function AppContent() {
             <RegisterMaintenanceScreen
               onBack={() => setCurrentScreen(registerMaintenanceOrigin)}
               onNext={handleMaintenanceDataNext}
+              vehicleImage={selectedVehicle?.imagen}
+            />
+          )}
+
+          {currentScreen === 'register-maintenance-ai' && (
+            <RegisterMaintenanceAiScreen
+              onBack={() => setCurrentScreen(registerMaintenanceOrigin)}
+              onFinish={handleMaintenanceFinish}
               vehicleImage={selectedVehicle?.imagen}
             />
           )}

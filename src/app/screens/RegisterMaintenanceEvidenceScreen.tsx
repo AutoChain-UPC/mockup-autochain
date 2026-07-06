@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
 import Button from '../components/Button';
-import { Image, FileText } from 'lucide-react';
+import { Image, FileText, Sparkles, ScanText, ShieldCheck, AlertTriangle, X } from 'lucide-react';
 import imgPhoto from '../../imports/RegistrarEvidenciaMantenimiento/c2c5c2cf38273812076d76246d2531a9bb373a4f.png';
 import imgDocument from '../../imports/RegistrarEvidenciaMantenimiento/14119e37a80e6012d48c11b841f9864d3ef68982.png';
 
@@ -16,6 +16,9 @@ export default function RegisterMaintenanceEvidenceScreen({
 }: RegisterMaintenanceEvidenceScreenProps) {
   const [photos, setPhotos] = useState<string[]>([]);
   const [documents, setDocuments] = useState<string[]>([]);
+  const [isAiAnalysisOpen, setIsAiAnalysisOpen] = useState(false);
+
+  const analysisReady = documents.length > 0;
 
   const handleAddPhoto = () => {
     // Simular carga de foto
@@ -37,6 +40,23 @@ export default function RegisterMaintenanceEvidenceScreen({
 
   const handleFinish = () => {
     onFinish({ photos, documents });
+  };
+
+  const fakeAnalysis = {
+    documentType: 'Factura de servicio',
+    supplier: 'AutoCare SAC',
+    totalAmount: 'S/.390.00',
+    issueDate: '15/04/2024',
+    confidence: '96%',
+    status: 'Documento consistente con el mantenimiento registrado',
+    highlights: [
+      'El monto total coincide con la suma de las acciones registradas.',
+      'La fecha del comprobante es compatible con la orden de servicio.',
+      'No se detectan campos faltantes en el mockup de extracción.'
+    ],
+    warnings: [
+      'Este análisis es simulado y no reemplaza una validación real.'
+    ]
   };
 
   return (
@@ -116,10 +136,134 @@ export default function RegisterMaintenanceEvidenceScreen({
           </div>
         </div>
 
+        {analysisReady && (
+          <div className="mb-8">
+            <div className="bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-500 rounded-3xl p-5 text-white shadow-xl">
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div>
+                  <div className="inline-flex items-center gap-2 bg-white/15 px-3 py-1 rounded-full text-[12px] font-semibold tracking-wide mb-3">
+                    <Sparkles size={14} />
+                    Análisis IA simulado
+                  </div>
+                  <h2 className="text-[22px] font-bold leading-tight max-w-[220px]">
+                    Analiza el documento antes de finalizar
+                  </h2>
+                </div>
+
+                <button
+                  onClick={() => setIsAiAnalysisOpen(true)}
+                  className="shrink-0 bg-white text-indigo-700 rounded-2xl px-4 py-3 text-[13px] font-bold shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                  Ver análisis
+                </button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="bg-white/10 rounded-2xl p-3">
+                  <p className="text-[11px] uppercase tracking-wider text-white/75 mb-1">Tipo</p>
+                  <p className="text-[13px] font-semibold">Factura</p>
+                </div>
+                <div className="bg-white/10 rounded-2xl p-3">
+                  <p className="text-[11px] uppercase tracking-wider text-white/75 mb-1">Confianza</p>
+                  <p className="text-[13px] font-semibold">96%</p>
+                </div>
+                <div className="bg-white/10 rounded-2xl p-3">
+                  <p className="text-[11px] uppercase tracking-wider text-white/75 mb-1">Estado</p>
+                  <p className="text-[13px] font-semibold">OK</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="mt-12">
           <Button onClick={handleFinish}>Finalizar Registro</Button>
         </div>
       </div>
+
+      {isAiAnalysisOpen && analysisReady && (
+        <div className="absolute inset-0 z-30 bg-slate-950/55 backdrop-blur-sm flex items-end">
+          <div className="w-full max-w-[414px] mx-auto bg-white rounded-t-[32px] shadow-2xl overflow-hidden animate-slideUp">
+            <div className="p-5 border-b border-slate-100 flex items-start justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-[12px] font-semibold mb-3">
+                  <ScanText size={14} />
+                  Ventana de análisis IA
+                </div>
+                <h3 className="text-slate-900 text-[22px] font-bold leading-tight">
+                  Lectura ficticia del documento
+                </h3>
+                <p className="text-slate-500 text-[14px] mt-2 leading-relaxed">
+                  Este panel simula extracción de datos, validación básica y alertas sobre la evidencia cargada.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setIsAiAnalysisOpen(false)}
+                className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
+              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-slate-500 text-[12px] font-semibold uppercase tracking-wider">Resumen</span>
+                  <span className="text-emerald-600 text-[12px] font-bold">Validado por IA</span>
+                </div>
+                <p className="text-slate-800 text-[15px] leading-relaxed">
+                  {fakeAnalysis.status}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                  <p className="text-slate-500 text-[12px] uppercase tracking-wider mb-1">Tipo detectado</p>
+                  <p className="text-slate-900 font-semibold">{fakeAnalysis.documentType}</p>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                  <p className="text-slate-500 text-[12px] uppercase tracking-wider mb-1">Confianza</p>
+                  <p className="text-slate-900 font-semibold">{fakeAnalysis.confidence}</p>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                  <p className="text-slate-500 text-[12px] uppercase tracking-wider mb-1">Proveedor</p>
+                  <p className="text-slate-900 font-semibold">{fakeAnalysis.supplier}</p>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                  <p className="text-slate-500 text-[12px] uppercase tracking-wider mb-1">Monto</p>
+                  <p className="text-slate-900 font-semibold">{fakeAnalysis.totalAmount}</p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                <div className="flex items-center gap-2 mb-3 text-emerald-600 font-semibold text-[14px]">
+                  <ShieldCheck size={18} />
+                  Campos consistentes
+                </div>
+                <ul className="space-y-2">
+                  {fakeAnalysis.highlights.map((item) => (
+                    <li key={item} className="text-slate-600 text-[14px] leading-relaxed flex gap-2">
+                      <span className="text-emerald-500 mt-1">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-amber-50 rounded-2xl border border-amber-200 p-4">
+                <div className="flex items-center gap-2 mb-2 text-amber-700 font-semibold text-[14px]">
+                  <AlertTriangle size={18} />
+                  Observación simulada
+                </div>
+                <p className="text-amber-800 text-[14px] leading-relaxed">
+                  {fakeAnalysis.warnings[0]}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

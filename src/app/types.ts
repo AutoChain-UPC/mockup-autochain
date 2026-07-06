@@ -108,6 +108,7 @@ export type Screen =
   | 'blockchain-cert'
   | 'profile'
   | 'notifications'
+  | 'register-maintenance-ai'
   | 'register-maintenance'
   | 'register-maintenance-details'
   | 'register-maintenance-evidence'

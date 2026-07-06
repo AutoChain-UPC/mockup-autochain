@@ -8,6 +8,7 @@ interface MaintenancesListScreenProps {
   onBack: () => void;
   onSelectMaintenance: (maintenance: Maintenance) => void;
   onRegisterMaintenance: () => void;
+  onRegisterMaintenanceAi: () => void;
   isOwner?: boolean;
 }
 
@@ -16,6 +17,7 @@ export default function MaintenancesListScreen({
   onBack,
   onSelectMaintenance,
   onRegisterMaintenance,
+  onRegisterMaintenanceAi,
   isOwner = true
 }: MaintenancesListScreenProps) {
   return (
@@ -28,9 +30,12 @@ export default function MaintenancesListScreen({
         </h1>
 
         {isOwner && (
-          <div className="mb-6">
+          <div className="mb-6 space-y-3">
             <Button onClick={onRegisterMaintenance}>
               Registrar Mantenimiento
+            </Button>
+            <Button variant="secondary" onClick={onRegisterMaintenanceAi}>
+              Registrar con IA
             </Button>
           </div>
         )}
